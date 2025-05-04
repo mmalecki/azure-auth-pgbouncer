@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import psutil
 import signal
 import time
 import os
@@ -25,21 +24,14 @@ def refresh_token():
     with open(AUTH_FILE, mode='w') as auth:
         auth.write(f"\"{IDENTITY_NAME}\" \"{token.token}\"\n")
 
-    if PID_FILE is not None:
-        with open(PID_FILE, mode='r') as pid:
-            pgbouncers = [int(pid.read().strip())]
-    else:
-        pgbouncers = list(item.pid for item in psutil.process_iter() if item.name() == 'pgbouncer')
+    with open(PID_FILE, mode='r') as pid:
+        bouncer = int(pid.read().strip())
 
-    print(f"Sending SIGHUP to running pgbouncers", pgbouncers)
-
-
-    for bouncer in pgbouncers:
-        try:
-            print(f"Sending SIGHUP to PID {bouncer}")
-            os.kill(bouncer, signal.SIGHUP)
-        except e:
-            print(f"Unable to send signal to PID {bouncer}: {e}")
+    try:
+        print(f"Sending SIGHUP to PID {bouncer}")
+        os.kill(bouncer, signal.SIGHUP)
+    except Exception as e:
+        print(f"Unable to send signal to PID {bouncer}: {e}")
 
 def main():
     while True:

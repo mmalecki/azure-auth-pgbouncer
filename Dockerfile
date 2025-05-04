@@ -1,6 +1,5 @@
 FROM python:3.13-alpine3.21 AS build
 
-RUN apk --no-cache add gcc python3-dev musl-dev linux-headers
 RUN pip install poetry
 
 RUN poetry config virtualenvs.create false
