@@ -1,1 +1,7 @@
 __pycache__/
+
+# pgbouncer/auth orchestration run files
+pgbouncer.pid
+pgbouncer.ini
+pgbouncer.log
+userlist.txt
