@@ -2,12 +2,13 @@
 
 . ./venv/bin/activate
 
-PGBOUNCER_AUTH_FILE="$PGBOUNCER_RUN_DIR/userlist.txt" \
-PGBOUNCER_PID_FILE="$PGBOUNCER_RUN_DIR/pgbouncer.pid" \
-  python -m token_refresh &
+export PGBOUNCER_AUTH_FILE="$PGBOUNCER_RUN_DIR/users.txt"
+export PGBOUNCER_PID_FILE="$PGBOUNCER_RUN_DIR/pgbouncer.pid"
+
+python -m token_refresh &
 
 # Wait for the first refresh to succeed before starting PgBouncer
-while [ ! -f "$PGBOUNCER_RUN_DIR/userlist.txt" ]; do
+while [ ! -f "$PGBOUNCER_AUTH_FILE" ]; do
   sleep 1
 done
 
@@ -20,11 +21,12 @@ cat > pgbouncer.ini <<-EOF
 [pgbouncer]
 pool_mode = session
 listen_port = 5432
-listen_addr = 127.0.0.1
+listen_addr = ${LISTEN_ADDRESS:-127.0.0.1}
 auth_type = trust
-auth_file = userlist.txt
-pidfile = pgbouncer.pid
-server_tls_sslmode = require
+auth_file = $PGBOUNCER_AUTH_FILE
+pidfile = $PGBOUNCER_PID_FILE
+server_tls_sslmode = ${PGSSLMODE:-verify-full}
+$PGBOUNCER_EXTRA_OPTIONS
 EOF
 
 exec pgbouncer pgbouncer.ini
