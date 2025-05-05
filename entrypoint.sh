@@ -6,6 +6,9 @@ export PGBOUNCER_AUTH_FILE="$PGBOUNCER_RUN_DIR/users.txt"
 export PGBOUNCER_PID_FILE="$PGBOUNCER_RUN_DIR/pgbouncer.pid"
 
 python -m azure_auth_pgbouncer &
+refresher_pid=$!
+
+echo "Token refresher running as PID $refresher_pid"
 
 # Wait for the first refresh to succeed before starting PgBouncer
 while [ ! -f "$PGBOUNCER_AUTH_FILE" ]; do
