@@ -5,4 +5,4 @@ dist/
 pgbouncer.pid
 pgbouncer.ini
 pgbouncer.log
-userlist.txt
+users.txt
