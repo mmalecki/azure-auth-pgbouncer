@@ -44,7 +44,7 @@ listen_addr = 127.0.0.1
 auth_type = trust
 auth_file = users.txt
 pidfile = pgbouncer.pid
-server_tls_sslmode = require # verify-full recommended
+server_tls_sslmode = verify-full
 ```
 
 and launch it:
@@ -57,6 +57,17 @@ Please note that the database host needs to be accessible over network - this
 project only handles authentication, not network traversals. However,
 with `server_tls_sslmode` set to `require` (as opposed to `verify-full`),
 you should see no issues connecting to a proxy set up by, say, `kubectl port-forward`.
+
+Additionally, PgBouncer limits the maximum password length to 2048 characters.
+The Azure CLI credential can be longer than that. In this case, you can expect to see
+the following error in PgBouncer logs:
+
+```
+ERROR password too long in auth file
+```
+
+With cloud use being the primary focus of this project, fixing this issue hasn't been
+a priority.
 
 ### Docker
 
