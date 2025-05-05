@@ -1,7 +1,17 @@
 # Azure Auth PgBouncer
 Azure Auth PgBouncer is designed to make securing connections to Azure PostgreSQL databases with Entra ID a breeze.
 
-It was inspired by the [GCP Cloud SQL Auth Proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy).
+It was inspired by the [GCP Cloud SQL Auth Proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy),
+but instead of doing the hard work of proxying the traffic, it orchestrates PgBouncer
+to do it instead by rotating an access token and updating its configuration accordingly.
+
+## Installation
+
+### pip
+
+```sh
+pipx install azure-auth-pgbouncer
+```
 
 ## Usage
 
@@ -12,7 +22,7 @@ When starting Azure Auth PgBouncer locally, you will need to start the two proce
 First, fire up the token refresher:
 
 ```sh
-PID_FILE=pgbouncer.pid AUTH_FILE=users.txt PGUSER=<identity-name> TBD
+PID_FILE=pgbouncer.pid AUTH_FILE=users.txt PGUSER=<identity-name> azure-auth-pgbouncer
 ```
 
 Then, once it's fetched its first token and `users.txt` appears in the directory,

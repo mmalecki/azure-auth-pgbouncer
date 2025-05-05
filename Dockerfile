@@ -21,7 +21,7 @@ RUN mkdir -p $RUN_DIR && chown pgbouncer:pgbouncer $RUN_DIR
 
 WORKDIR /app
 COPY --from=build /app/venv /app/venv/
-COPY token_refresh.py entrypoint.sh ./
+COPY azure_auth_pgbouncer.py entrypoint.sh ./
 
 USER pgbouncer
 ENV PGBOUNCER_RUN_DIR=$RUN_DIR
