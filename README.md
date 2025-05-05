@@ -44,7 +44,7 @@ Due to the tight integration, PgBouncer and the token refresher come bundled in
 a single Docker container.
 
 ```sh
-docker run -e PGUSER=<identity-name> -it TBD
+docker run -e PGUSER=<identity-name> -it ghcr.io/mmalecki/azure-auth-pgbouncer:latest
 ```
 
 ### On Kubernetes
