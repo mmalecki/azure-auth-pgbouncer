@@ -7,10 +7,15 @@ to do it instead by rotating an access token and updating its configuration acco
 
 ## Installation
 
-### pip
+### pipx
 
 ```sh
 pipx install azure-auth-pgbouncer
+```
+
+### Docker
+```sh
+docker pull ghcr.io/mmalecki/azure-auth-pgbouncer:latest
 ```
 
 ## Usage
@@ -26,7 +31,7 @@ PID_FILE=pgbouncer.pid AUTH_FILE=users.txt PGUSER=<identity-name> azure-auth-pgb
 ```
 
 Then, once it's fetched its first token and `users.txt` appears in the directory,
-configure PgBouncer in a file named `pgbouncer.ini`:
+configure PgBouncer in a file named `pgbouncer.ini`, for example:
 
 ```ini
 [databases]
@@ -48,6 +53,11 @@ and launch it:
 pgbouncer pgbouncer.ini
 ```
 
+Please note that the database host needs to be accessible over network - this
+project only handles authentication, not network traversals. However,
+with `server_tls_sslmode` set to `require` (as opposed to `verify-full`),
+you should see no issues connecting to a proxy set up by, say, `kubectl port-forward`.
+
 ### Docker
 
 Due to the tight integration, PgBouncer and the token refresher come bundled in
@@ -62,3 +72,7 @@ docker run -e PGUSER=<identity-name> -it ghcr.io/mmalecki/azure-auth-pgbouncer:l
 #### As a sidecar
 
 #### As a deployment/statefulset/...
+
+This method creates an unauthenticated PostgreSQL endpoint in your cluster,
+where only method of checking identity used is verifying the username.
+This may be fine for your use case, but you've been warned either way.
