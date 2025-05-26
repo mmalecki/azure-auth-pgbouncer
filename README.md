@@ -75,12 +75,33 @@ Due to the tight integration, PgBouncer and the token refresher come bundled in
 a single Docker container.
 
 ```sh
-docker run -e PGUSER=<identity-name> -it ghcr.io/mmalecki/azure-auth-pgbouncer:latest
+docker run -e PGHOST=<azure-postgresql-database-host> -e PGUSER=<identity-name> -it ghcr.io/mmalecki/azure-auth-pgbouncer:latest
 ```
+
+No additional configuration is needed - the `pgbouncer.ini` file is generated
+by container's entrypoint.
 
 ### On Kubernetes
 
 #### As a sidecar
+
+Add the following init container to your deployment/statefulset/...:
+
+```yaml
+      initContainers:
+        - name: azure-auth-pgbouncer
+          image: ghcr.io/mmalecki/azure-auth-pgbouncer:v0.1.1
+          imagePullPolicy: IfNotPresent
+          restartPolicy: Always
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          env:
+          - name: PGHOST
+            value: <azure-postgresql-database-host>
+          - name: PGUSER
+            value: <identity-name>
+```
 
 #### As a deployment/statefulset/...
 
