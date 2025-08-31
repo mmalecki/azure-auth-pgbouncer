@@ -9,7 +9,9 @@ from azure.identity import DefaultAzureCredential
 IDENTITY_NAME = os.getenv("PGUSER")
 AUTH_FILE = os.getenv("PGBOUNCER_AUTH_FILE", "users.txt")
 PID_FILE = os.getenv("PGBOUNCER_PID_FILE", "pgbouncer.pid")
+
 REFRESH_INTERVAL = int(os.getenv("AZURE_TOKEN_REFRESH_INTERVAL", 15 * 60))
+RETRY_INTERVAL = int(os.getenv("AZURE_TOKEN_RETRY_INTERVAL", 30))
 
 RESOURCE_SCOPE = "https://ossrdbms-aad.database.windows.net/.default"
 
@@ -45,8 +47,12 @@ def refresh_token():
 
 def main():
     while True:
-        refresh_token()
-        time.sleep(REFRESH_INTERVAL)
+        try:
+            refresh_token()
+            time.sleep(REFRESH_INTERVAL)
+        except Exception as e:
+            print(f"Unable to refresh token: {e}")
+            time.sleep(RETRY_INTERVAL)
 
 if __name__ == '__main__':
     main()
